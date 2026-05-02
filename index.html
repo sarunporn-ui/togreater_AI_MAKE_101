@@ -1,48 +1,56 @@
-// ... (โค้ดส่วนต้นเหมือนเดิม)
-  <script>
-    let lineUserId = "Unknown";
-    let lineDisplayName = "Unknown";
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAKE AI 101 Registration</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    body { font-family: sans-serif; background-color: #F5F7F9; padding: 20px; text-align: center; }
+    .container { background: white; padding: 20px; border-radius: 12px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; background-color: #06C755; color: white; border: none; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>ลงทะเบียน MAKE AI 101</h2>
+    <form id="regForm" onsubmit="submitForm(event)">
+      <input type="text" id="name" placeholder="ชื่อ-นามสกุล" required>
+      <input type="tel" id="phone" placeholder="เบอร์โทรศัพท์" required>
+      <input type="email" id="email" placeholder="อีเมล" required>
+      <button type="submit" id="submitBtn">ลงทะเบียน</button>
+    </form>
+    <div id="loading" style="display:none; margin-top:10px;">กำลังส่งข้อมูล...</div>
+  </div>
 
+  <script>
+    // แก้ไข ID ของคุณที่นี่
     const LIFF_ID = "2009958079-Hb8CbRfx"; 
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycby7ZEKUUkpInYDxIbW9JobKnt8oDMY0qveJjlarviSTrMb8PYfKgCNaecjU2aCJS3Ox/exec"; 
 
-    async function initLiff() {
+    // เริ่มต้น LIFF เมื่อโหลดหน้าเว็บ
+    window.onload = async () => {
       try {
         await liff.init({ liffId: LIFF_ID });
-        if (!liff.isLoggedIn()) {
-          liff.login();
-        } else {
-          const profile = await liff.getProfile();
-          lineUserId = profile.userId;
-          lineDisplayName = profile.displayName;
-          console.log("Logged in as: ", lineUserId);
-        }
+        if (!liff.isLoggedIn()) liff.login();
       } catch (err) {
-        alert("LIFF Init Error: " + err);
+        alert("LIFF Error: " + err);
       }
-    }
-    initLiff();
+    };
 
-    function submitForm(event) {
+    async function submitForm(event) {
       event.preventDefault();
-      
-      // Safety Check: ถ้ายังไม่โหลด ID ห้ามส่ง
-      if (lineUserId === "Unknown") {
-        alert("กำลังโหลดข้อมูล LINE... โปรดรอสักครู่แล้วกดใหม่");
-        return;
-      }
-      
-      const btn = document.getElementById("submitBtn");
-      const loading = document.getElementById("loading");
-      btn.disabled = true;
-      loading.style.display = "block";
+      document.getElementById("submitBtn").disabled = true;
+      document.getElementById("loading").style.display = "block";
 
+      const profile = await liff.getProfile();
       const formData = {
         name: document.getElementById("name").value,
         phone: document.getElementById("phone").value,
         email: document.getElementById("email").value,
-        userId: lineUserId,
-        displayName: lineDisplayName
+        userId: profile.userId,
+        displayName: profile.displayName
       };
 
       fetch(GAS_API_URL, {
@@ -50,21 +58,17 @@
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(formData)
       })
-      .then(response => response.json())
+      .then(res => res.json())
       .then(data => {
-        if (data.status === "success") {
-          alert("ลงทะเบียนสำเร็จ!");
-          liff.closeWindow();
-        } else {
-          alert("Error: " + data.message);
-          btn.disabled = false;
-          loading.style.display = "none";
-        }
+        alert("สำเร็จ!");
+        liff.closeWindow();
       })
-      .catch(error => {
-        alert("Server Error: " + error);
-        btn.disabled = false;
-        loading.style.display = "none";
+      .catch(err => {
+        alert("Error: " + err);
+        document.getElementById("submitBtn").disabled = false;
+        document.getElementById("loading").style.display = "none";
       });
     }
   </script>
+</body>
+</html>
