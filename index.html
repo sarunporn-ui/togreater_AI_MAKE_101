@@ -4,45 +4,71 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MAKE AI 101 Registration</title>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/LineSeed/LineSeed.css">
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  
   <style>
-    body { font-family: sans-serif; background-color: #F5F7F9; padding: 20px; text-align: center; }
-    .container { background: white; padding: 20px; border-radius: 12px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; box-sizing: border-box; }
-    button { width: 100%; padding: 12px; background-color: #06C755; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    body { font-family: 'LINE Seed Sans TH', sans-serif; background-color: #F5F7F9; padding: 20px; margin: 0; }
+    .container { background: white; padding: 30px 20px; border-radius: 12px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .header { text-align: center; margin-bottom: 25px; }
+    .header h1 { color: #06C755; font-size: 28px; margin: 0 0 5px 0; }
+    .header h2 { font-size: 16px; color: #666; margin: 0; font-weight: normal; }
+    .info-box { background: #F8F9FA; padding: 15px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; border-left: 4px solid #06C755; line-height: 1.6; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+    input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: 'LINE Seed Sans TH', sans-serif; }
+    button { width: 100%; padding: 14px; background-color: #06C755; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: 'LINE Seed Sans TH', sans-serif; }
+    button:disabled { background-color: #ccc; }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <h2>ลงทะเบียน MAKE AI 101</h2>
+    <div class="header">
+      <h1>MAKE AI 101</h1>
+      <h2>จากไม่เคยใช้ สู่คนที่ใช้ AI ทำงานแทนได้<br>โดย เกรท เพื่อนสนิท AI (Togreater)</h2>
+    </div>
+
+    <div class="info-box">
+      <strong>รูปแบบ:</strong> สอนสดผ่าน Online<br>
+      <strong>วันที่:</strong> 20 พ.ค. 2026<br>
+      <strong>เวลา:</strong> 19.00 - 20.00
+    </div>
+
     <form id="regForm" onsubmit="submitForm(event)">
-      <input type="text" id="name" placeholder="ชื่อ-นามสกุล" required>
-      <input type="tel" id="phone" placeholder="เบอร์โทรศัพท์" required>
-      <input type="email" id="email" placeholder="อีเมล" required>
+      <div class="form-group">
+        <label>ชื่อ-นามสกุล</label>
+        <input type="text" id="name" required placeholder="กรอกชื่อ-นามสกุล">
+      </div>
+      <div class="form-group">
+        <label>เบอร์โทรศัพท์</label>
+        <input type="tel" id="phone" required placeholder="กรอกเบอร์โทรศัพท์">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email" required placeholder="กรอกอีเมล">
+      </div>
       <button type="submit" id="submitBtn">ลงทะเบียน</button>
     </form>
-    <div id="loading" style="display:none; margin-top:10px;">กำลังส่งข้อมูล...</div>
   </div>
 
   <script>
-    // แก้ไข ID ของคุณที่นี่
     const LIFF_ID = "2009958079-Hb8CbRfx"; 
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycby7ZEKUUkpInYDxIbW9JobKnt8oDMY0qveJjlarviSTrMb8PYfKgCNaecjU2aCJS3Ox/exec"; 
 
-    // เริ่มต้น LIFF เมื่อโหลดหน้าเว็บ
     window.onload = async () => {
       try {
         await liff.init({ liffId: LIFF_ID });
         if (!liff.isLoggedIn()) liff.login();
-      } catch (err) {
-        alert("LIFF Error: " + err);
-      }
+      } catch (err) { console.error(err); }
     };
 
     async function submitForm(event) {
       event.preventDefault();
-      document.getElementById("submitBtn").disabled = true;
-      document.getElementById("loading").style.display = "block";
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.innerText = "กำลังบันทึก...";
 
       const profile = await liff.getProfile();
       const formData = {
@@ -60,13 +86,13 @@
       })
       .then(res => res.json())
       .then(data => {
-        alert("สำเร็จ!");
+        alert("คุณสมัครเสร็จเรียบร้อย\nเช็คลิงก์ได้ที่ LINE OA โค้ชเกรท ToGreater");
         liff.closeWindow();
       })
       .catch(err => {
-        alert("Error: " + err);
-        document.getElementById("submitBtn").disabled = false;
-        document.getElementById("loading").style.display = "none";
+        alert("เกิดข้อผิดพลาด: " + err);
+        btn.disabled = false;
+        btn.innerText = "ลงทะเบียน";
       });
     }
   </script>
