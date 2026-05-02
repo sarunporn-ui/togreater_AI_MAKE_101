@@ -9,51 +9,102 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   
   <style>
-    body { font-family: 'LINE Seed Sans TH', sans-serif; background-color: #F5F7F9; padding: 20px; margin: 0; }
-    .container { background: white; padding: 30px 20px; border-radius: 12px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .header { text-align: center; margin-bottom: 25px; }
-    .header h1 { color: #06C755; font-size: 28px; margin: 0 0 5px 0; }
-    .header h2 { font-size: 16px; color: #666; margin: 0; font-weight: normal; }
-    .info-box { background: #F8F9FA; padding: 15px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; border-left: 4px solid #06C755; line-height: 1.6; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-    input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: 'LINE Seed Sans TH', sans-serif; }
-    button { width: 100%; padding: 14px; background-color: #06C755; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: 'LINE Seed Sans TH', sans-serif; }
-    button:disabled { background-color: #ccc; }
+    :root {
+      --primary-color: #06C755;
+      --bg-color: #F4F6F8; /* โทนสว่างคล้าย Moodboard */
+      --card-bg: #FFFFFF;
+      --text-main: #333333;
+    }
+
+    body { 
+      font-family: 'LINE Seed Sans TH', sans-serif; 
+      background-color: var(--bg-color); 
+      margin: 0; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container { 
+      background: var(--card-bg); 
+      padding: 40px 30px; 
+      border-radius: 20px; 
+      width: 100%; 
+      max-width: 400px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* เงาบางๆ ดู Minimal */
+      border: 1px solid #e1e1e1;
+    }
+
+    .header { text-align: center; margin-bottom: 30px; }
+    .icon-box { background: #E9FBF0; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
+    
+    .header h1 { color: var(--primary-color); font-size: 24px; margin: 0; }
+    .header p { font-size: 14px; color: #777; margin-top: 5px; }
+
+    .info-box { 
+      background: #F9FAFB; 
+      padding: 15px; 
+      border-radius: 12px; 
+      font-size: 14px; 
+      margin-bottom: 25px; 
+      border-left: 4px solid var(--primary-color); 
+      color: #555;
+    }
+
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 13px; color: #444; }
+    input { 
+      width: 100%; padding: 12px; border: 1.5px solid #E5E7EB; border-radius: 10px; 
+      box-sizing: border-box; font-family: 'LINE Seed Sans TH', sans-serif;
+      transition: border-color 0.3s;
+    }
+    input:focus { outline: none; border-color: var(--primary-color); }
+    
+    button { 
+      width: 100%; padding: 15px; background-color: var(--primary-color); color: white; 
+      border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; 
+      font-family: 'LINE Seed Sans TH', sans-serif; margin-top: 10px;
+    }
+    button:disabled { background-color: #A0A0A0; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <div class="header">
+      <div class="icon-box">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#06C755" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+      </div>
       <h1>MAKE AI 101</h1>
-      <h2>จากไม่เคยใช้ สู่คนที่ใช้ AI ทำงานแทนได้<br>โดย เกรท เพื่อนสนิท AI (Togreater)</h2>
+      <p>โดย เกรท เพื่อนสนิท AI (Togreater)</p>
     </div>
 
     <div class="info-box">
-      <strong>รูปแบบ:</strong> สอนสดผ่าน Online<br>
-      <strong>วันที่:</strong> 20 พ.ค. 2026<br>
-      <strong>เวลา:</strong> 19.00 - 20.00
+      <strong>กำหนดการ:</strong> 20 พ.ค. 2026<br>
+      <strong>เวลา:</strong> 19.00 - 20.00 น. (Online)
     </div>
 
     <form id="regForm" onsubmit="submitForm(event)">
       <div class="form-group">
         <label>ชื่อ-นามสกุล</label>
-        <input type="text" id="name" required placeholder="กรอกชื่อ-นามสกุล">
+        <input type="text" id="name" placeholder="ชื่อของคุณ" required>
       </div>
       <div class="form-group">
         <label>เบอร์โทรศัพท์</label>
-        <input type="tel" id="phone" required placeholder="กรอกเบอร์โทรศัพท์">
+        <input type="tel" id="phone" placeholder="08x-xxx-xxxx" required>
       </div>
       <div class="form-group">
         <label>Email</label>
-        <input type="email" id="email" required placeholder="กรอกอีเมล">
+        <input type="email" id="email" placeholder="email@example.com" required>
       </div>
-      <button type="submit" id="submitBtn">ลงทะเบียน</button>
+      <button type="submit" id="submitBtn">ลงทะเบียนรับสิทธิ์</button>
     </form>
   </div>
 
   <script>
+    // ใส่ค่าของคุณที่นี่
     const LIFF_ID = "2009958079-Hb8CbRfx"; 
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycby7ZEKUUkpInYDxIbW9JobKnt8oDMY0qveJjlarviSTrMb8PYfKgCNaecjU2aCJS3Ox/exec"; 
 
@@ -68,7 +119,7 @@
       event.preventDefault();
       const btn = document.getElementById("submitBtn");
       btn.disabled = true;
-      btn.innerText = "กำลังบันทึก...";
+      btn.innerText = "กำลังบันทึกข้อมูล...";
 
       const profile = await liff.getProfile();
       const formData = {
@@ -90,9 +141,9 @@
         liff.closeWindow();
       })
       .catch(err => {
-        alert("เกิดข้อผิดพลาด: " + err);
+        alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
         btn.disabled = false;
-        btn.innerText = "ลงทะเบียน";
+        btn.innerText = "ลงทะเบียนรับสิทธิ์";
       });
     }
   </script>
