@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAKE AI 101 Registration</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/LineSeed/LineSeed.css">
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  
+  <style>
+    /* ใส่ CSS เหมือนเดิมทั้งหมดได้เลยครับ ขอละไว้เพื่อให้โค้ดดูสั้นลง */
+    body { font-family: 'LINE Seed Sans TH', sans-serif; background-color: #F5F7F9; padding: 20px; margin: 0; }
+    .container { background: white; padding: 30px 20px; border-radius: 12px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .header { text-align: center; margin-bottom: 25px; }
+    .header h1 { color: #06C755; font-size: 24px; margin: 0 0 5px 0; }
+    .header h2 { font-size: 16px; color: #666; margin: 0 0 15px 0; font-weight: normal; }
+    .info-box { background: #F8F9FA; padding: 15px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; border-left: 4px solid #06C755; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+    input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: 'LINE Seed Sans TH', sans-serif; }
+    button { width: 100%; padding: 12px; background-color: #06C755; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: 'LINE Seed Sans TH', sans-serif;}
+    button:disabled { background-color: #ccc; }
+    #loading { text-align: center; font-size: 14px; color: #666; display: none; margin-top: 15px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>MAKE AI 101</h1>
+      <h2>จากคนไม่เคยใช้ สู่การใช้ AI ทำงานแทนได้</h2>
+    </div>
+
+    <div class="info-box">
+      <strong>ผู้สอน:</strong> เกรท เพื่อนสนิท AI (โค้ชเกรท Togreater)<br>
+      <strong>รูปแบบ:</strong> สอนสดผ่าน Online<br>
+      <strong>วันที่:</strong> 20 พ.ค. 2026 | <strong>เวลา:</strong> 19.00 - 20.00
+    </div>
+
+    <form id="regForm" onsubmit="submitForm(event)">
+      <div class="form-group">
+        <label>ชื่อ-นามสกุล</label>
+        <input type="text" id="name" required placeholder="กรอกชื่อ-นามสกุล">
+      </div>
+      <div class="form-group">
+        <label>เบอร์โทรศัพท์</label>
+        <input type="tel" id="phone" required placeholder="กรอกเบอร์โทรศัพท์">
+      </div>
+      <div class="form-group">
+        <label>อีเมล</label>
+        <input type="email" id="email" required placeholder="กรอกอีเมล">
+      </div>
+      
+      <button type="submit" id="submitBtn">ลงทะเบียนรับลิงก์เข้าเรียน</button>
+      <div id="loading">กำลังประมวลผล กรุณารอสักครู่...</div>
+    </form>
+  </div>
+
+  <script>
+    let lineUserId = "Unknown";
+    let lineDisplayName = "Unknown";
+
+    // 1. ใส่ LIFF ID ที่ได้จาก LINE Developers
+    const LIFF_ID = "ใส่_LIFF_ID_ของคุณที่นี่"; 
+    
+    // 2. ใส่ Web App URL ที่ได้จาก Google Apps Script (อันใหม่)
+    const GAS_API_URL = "ใส่_WEB_APP_URL_ของ_APPS_SCRIPT_ที่นี่"; 
+
+    // เริ่มต้น LIFF
+    async function initLiff() {
+      try {
+        await liff.init({ liffId: LIFF_ID });
+        if (!liff.isLoggedIn()) {
+          liff.login();
+        } else {
+          const profile = await liff.getProfile();
+          lineUserId = profile.userId;
+          lineDisplayName = profile.displayName;
+        }
+      } catch (err) {
+        console.error("LIFF Init Error: ", err);
+      }
+    }
+    initLiff();
+
+    function submitForm(event) {
+      event.preventDefault();
+      
+      const btn = document.getElementById("submitBtn");
+      const loading = document.getElementById("loading");
+      btn.disabled = true;
+      loading.style.display = "block";
+
+      const formData = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        email: document.getElementById("email").value,
+        userId: lineUserId,
+        displayName: lineDisplayName
+      };
+
+      // ส่งข้อมูลไปที่ Apps Script ผ่าน Fetch API
+      fetch(GAS_API_URL, {
+        method: 'POST',
+        // ใช้ text/plain เพื่อป้องกันปัญหาเรื่อง CORS policy ตอนยิงข้ามโดเมน
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8', 
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+          alert("ลงทะเบียนสำเร็จ! กรุณาเช็คข้อความใน LINE ของคุณ");
+          liff.closeWindow(); // ปิดหน้าต่าง LIFF อัตโนมัติ
+        } else {
+          alert("เกิดข้อผิดพลาด: " + data.message);
+          btn.disabled = false;
+          loading.style.display = "none";
+        }
+      })
+      .catch(error => {
+        alert("ไม่สามารถติดต่อเซิร์ฟเวอร์ได้: " + error);
+        btn.disabled = false;
+        loading.style.display = "none";
+      });
+    }
+  </script>
+</body>
+</html>
